@@ -2012,9 +2012,12 @@ function _select_Gateway() { // Check for Gateway used to
         // Collect rewards for completed tasks and restart
         if (unsafeWindow.client.dataModel.model.ent.main.itemassignments.complete) {
             if (!unsafeWindow.client.dataModel.model.ent.main.itemassignments.assignments.every(function(entry, idx) {
-                if (entry.hascompletedetails && (collectTaskAttempts[idx] < scriptSettings.general.maxCollectTaskAttempts)) {
+                if (entry.hascompletedetails && (collectTaskAttempts[idx] < scriptSettings.general.maxCollectTaskAttempts) &&
+                ( collectTaskAttempts[unsafeWindow.client.getCurrentCharAtName() + ':' + idx] || 0 ) < (Date.now() - 15000)
+                ) {
                     unsafeWindow.client.professionTaskCollectRewards(entry.uassignmentid);
                     collectTaskAttempts[idx]++;
+                    collectTaskAttempts[unsafeWindow.client.getCurrentCharAtName() + ':' + idx] = Date.now();
                     return false;
                 }
                 return true;
